@@ -81,6 +81,9 @@ const parse_payload = (message) => {
     };
 }
 
+const encodeField = (fieldID, fieldValue) => `${fieldID}${fieldValue.length.toString().padStart(3, '0')}${fieldValue}`
+
 module.exports = {
+    encodeField,
     parse_payload,
 };

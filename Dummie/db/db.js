@@ -25,7 +25,12 @@ const getTransaction = id => {
     return transaction ? {id, ...transaction} : null;
 }
 
+const setStatus = (id, status) => {
+    TRANSACTIONS[id] = status;
+}
+
 module.exports = {
     createTransaction,
-    getTransaction
+    getTransaction,
+    setStatus,
 }
