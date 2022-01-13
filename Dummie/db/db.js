@@ -1,7 +1,7 @@
 // Transactions DB
-let TRANSACTIONS = {}
+const TRANSACTIONS = {}
 
-let createTransaction = (operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile, status) => {
+const createTransaction = (operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile, status) => {
 
     // Create an unique ID for the transaction
     const id = Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
@@ -11,22 +11,21 @@ let createTransaction = (operation, amount, buyersName, orderIdentifier, callbac
 
     // Clean empty values
     TRANSACTIONS[id] = Object.fromEntries(Object.entries(TRANSACTIONS[id]).filter(([_, v]) => v != null));
-    
+
     // Return ID
     return id;
 }
 
-let getTransaction = id => {
+const getTransaction = id => {
 
     // Get transaction
-    let transaction = TRANSACTIONS[id]
+    const transaction = TRANSACTIONS[id]
 
     // Return transaction details
     return {id, ...transaction}
 }
 
 module.exports = {
-    TRANSACTIONS,
     createTransaction,
     getTransaction
 }
