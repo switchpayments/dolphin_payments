@@ -11,7 +11,9 @@ router.get('/:id', (req, res, next) => {
     // Get transaction details
     const info = getTransaction(req.params.id);
     if (info) {
-      res.send(`✅${info['status']}${info['orderIdentifier']}`);
+      res.send({
+        'payload': `✅${info['status']}${info['orderIdentifier']}`
+      });
     } else {
       res.status(404);
       res.send('🤡');
@@ -28,7 +30,16 @@ router.get('/:id', (req, res, next) => {
 
 router.post('/', (req, res, next) => {
   try {
-    const info = parse_payload(req.body.payload);
+    let info = {};
+    try {
+      info = parse_payload(req.body.payload);
+    } catch (e) {
+      res.status(400);
+      return res.send({
+        'payload': e,
+      });
+    }
+
     const id = createTransaction(
       info.operation,
       info.amount,
@@ -36,17 +47,23 @@ router.post('/', (req, res, next) => {
       info.orderIdentifier,
       info.callbackUrl,
       info.userProfile,
-      'ok'
+      'ok',
     );
+    const status = '✅';
+    const encodedID = `01${id.toString().length.toString().padStart(3, '0')}${id}`;
+    const encodedOrderID = `02${info.orderIdentifier.length.toString().padStart(3, '0')}${info.orderIdentifier}`;
 
     res.status(201);
     res.send({
-      'id': id
-    })
-
+      'payload': `${status}${encodedID}${encodedOrderID}`,
+    });
   } catch (e) {
-    res.status(400);
-    return res.send(e);
+    // Something bad happened :|
+    res.status(500);
+    res.send('💀');
+
+    // Let's keep the log...
+    console.log(`${req.params.id}: ` + e);
   }
 });
 
