@@ -13,13 +13,25 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
   try {
     const info = parse_payload(req.body.payload);
+    const id = createTransaction(
+      info.operation,
+      info.amount,
+      info.buyersName,
+      info.orderIdentifier,
+      info.callbackUrl,
+      info.userProfile,
+      'ok'
+    );
+
+    res.status(201);
+    res.send({
+      'id': id
+    })
+
   } catch (e) {
     res.status(400);
     return res.send(e);
   }
-
-  res.status(201);
-  res.send('respond with a resources');
 });
 
 /**
