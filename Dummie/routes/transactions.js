@@ -2,12 +2,28 @@ const express = require('express');
 const router = express.Router();
 const XMLHttpRequest = require('xhr2');
 
-const { createTransaction } = require('../db/db');
+const { createTransaction, getTransaction } = require('../db/db');
 const { parse_payload } = require('../utils');
 
 /* GET users listing. */
-router.get('/', (req, res, next) => {
-  res.send('respond with a resource');
+router.get('/:id', (req, res, next) => {
+  try {
+    // Get transaction details
+    const info = getTransaction(req.params.id);
+    if (info) {
+      res.send(`✅${info['status']}${info['orderIdentifier']}`);
+    } else {
+      res.status(404);
+      res.send('🤡');
+    }
+  } catch (e) {
+    // Something bad happened :|
+    res.status(500);
+    res.send('💀');
+
+    // Let's keep the log...
+    console.log(`${req.params.id}: ` + e);
+  }
 });
 
 router.post('/', (req, res, next) => {
