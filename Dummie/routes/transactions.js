@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
  * @param callbackUrl - URL we want to send the webhook
  */
 function webhookHandler(orderIdentifier, callbackUrl) {
-  setTimeout(function() {
+  setTimeout(() => {
       let xhr = new XMLHttpRequest();
       xhr.open('POST', callbackUrl, true);
       xhr.setRequestHeader('Content-Type', 'application/json');
