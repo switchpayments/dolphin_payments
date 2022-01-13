@@ -22,7 +22,7 @@ const getTransaction = id => {
     const transaction = TRANSACTIONS[id]
 
     // Return transaction details
-    return {id, ...transaction}
+    transaction ? {id, ...transaction} : null;
 }
 
 module.exports = {
