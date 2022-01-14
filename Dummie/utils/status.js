@@ -3,21 +3,15 @@
 // Rules are tried in the defined order, and the first to hit is applied
 const statusRules = [
 
-    // Amount is higher than 200€
-    [
-        [x => true, x => x >= 200, x => true, x => true, x => true],
-        ['⏳', '✅'],
-    ],
-
     // User profile is "Spider Man"
     [
         [x => true, x => true, x => x !== 'Peter Parker', x => true, x => x === 'Spiderman'],
         ['⏳', '❌', 'We all know you are not who you say you are. '],
     ],
 
-    // User Profile is "Iron Man"
+    // User Profile is "Tony Stark"
     [
-        [x => true, x => x >= 1000000, x => true, x => true, x => x === 'Iron Man'],
+        [x => true, x => x <= 1000000, x => true, x => true, x => x === 'Tony Stark'],
         ['⏳', '❌', 'Suspicious payment. This seems to be too cheap for you. '],
     ],
 
@@ -39,6 +33,17 @@ const statusRules = [
         ['⏳', '❌', 'Sorry, we\'re a bit racist in here.'],
     ],
 
+    // Amount is higher than 3€. User Profile is required.
+    [
+        [x => true, x => x > 300, x => true, x => true, x => true],
+        ['⏳', '❌', 'User profile required for amounts higher than 🍤🍤🍤.'],
+    ],
+
+    // Amount is higher than 2€
+    [
+        [x => true, x => x >= 200, x => true, x => true, x => true],
+        ['⏳', '✅'],
+    ],
 ];
 
 const orderedFields = ['operation', 'amount', 'buyersName', 'orderIdentifier', 'userProfile'];
