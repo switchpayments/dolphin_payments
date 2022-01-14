@@ -26,6 +26,8 @@ const getTransaction = id => {
 }
 
 const setStatus = (id, status) => {
+
+    // Update the status of the transaction
     TRANSACTIONS[id] = status;
 }
 
