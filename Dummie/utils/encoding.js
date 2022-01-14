@@ -83,12 +83,13 @@ const decodePayload = (message) => {
 
 const encodeField = (fieldID, fieldValue) => `${fieldID}${fieldValue.length.toString().padStart(3, '0')}${fieldValue}`
 
-const encodePayload = (status, id, orderID) => {
+const encodePayload = (status, id, orderID, errorDetails) => {
     const encodedID = encodeField('01', id.toString());
     const encodedOrderID = encodeField('02', orderID.toString());
+    const encodedErrorDetails = errorDetails ? encodeField('03', errorDetails.toString()) : '';
 
     return {
-        'payload': `${status}${encodedID}${encodedOrderID}`,
+        'payload': `${status}${encodedID}${encodedOrderID}${encodedErrorDetails}`,
     }
 }
 

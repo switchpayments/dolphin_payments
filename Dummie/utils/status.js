@@ -2,10 +2,43 @@
 // Order of info fields defined below
 // Rules are tried in the defined order, and the first to hit is applied
 const statusRules = [
+
+    // Amount is higher than 200€
     [
         [x => true, x => x >= 200, x => true, x => true, x => true],
         ['⏳', '✅'],
     ],
+
+    // User profile is "Spider Man"
+    [
+        [x => true, x => true, x => x !== 'Peter Parker', x => true, x => x === 'Spiderman'],
+        ['⏳', '❌', 'We all know you are not who you say you are. '],
+    ],
+
+    // User Profile is "Iron Man"
+    [
+        [x => true, x => x >= 1000000, x => true, x => true, x => x === 'Iron Man'],
+        ['⏳', '❌', 'Suspicious payment. This seems to be too cheap for you. '],
+    ],
+
+    // User Profile is "Hulk"
+    [
+        [x => true, x => x >= true, x => true, x => true, x => x === 'Hulk'],
+        ['⏳', '❌', 'We\'re sure you have no idea how to buy stuff.'],
+    ],
+
+    // User Profile is "Vicky"
+    [
+        [x => true, x => x >= true, x => true, x => true, x => x === 'Vicky'],
+        ['⏳', '✅', 'Of course! And yes, these are not error details, these are SUCCESS DETAILS! And, for you, everythig is free!'],
+    ],
+
+    // User Profile is "Nemo"
+    [
+        [x => true, x => x >= true, x => true, x => true, x => x === 'Nemo'],
+        ['⏳', '❌', 'Sorry, we\'re a bit racist in here.'],
+    ],
+
 ];
 
 const orderedFields = ['operation', 'amount', 'buyersName', 'orderIdentifier', 'userProfile'];
@@ -30,7 +63,7 @@ const calculateStatus = (info) => {
     }
 
     // If all rules fail, let's be nice
-    return ['✅', '✅'];
+    return ['✅', '✅', null];
 }
 
 module.exports = {

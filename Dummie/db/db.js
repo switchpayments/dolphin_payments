@@ -1,13 +1,13 @@
 // Transactions DB
 const TRANSACTIONS = {}
 
-const createTransaction = (operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile, status) => {
+const createTransaction = (operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile, status, errorDetails) => {
 
     // Create an unique ID for the transaction
     const id = Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
 
     // Add the transaction to the DB
-    TRANSACTIONS[id] = {operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile, status};
+    TRANSACTIONS[id] = {operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile, status, errorDetails};
 
     // Clean empty values
     TRANSACTIONS[id] = Object.fromEntries(Object.entries(TRANSACTIONS[id]).filter(([_, v]) => v != null));
@@ -26,7 +26,7 @@ const getTransaction = id => {
 }
 
 const setStatus = (id, status) => {
-    TRANSACTIONS[id] = status;
+    TRANSACTIONS[id].status = status;
 }
 
 module.exports = {

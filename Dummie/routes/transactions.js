@@ -12,7 +12,7 @@ router.get('/:id', (req, res, next) => {
         const info = getTransaction(req.params.id);
         if (info) {
             res.status(200);
-            const payload = encodePayload(info.status, req.params.id, info.orderIdentifier);
+            const payload = encodePayload(info.status, req.params.id, info.orderIdentifier, info.errorDetails);
             res.send(payload);
         } else {
             res.status(404);
@@ -24,7 +24,8 @@ router.get('/:id', (req, res, next) => {
         res.send('💀');
 
         // Let's keep the log...
-        console.log(`${req.params.id}: ` + e);
+        console.log(`${req.params.id}: `);
+        console.error(e, e.stack)
     }
 });
 
@@ -41,8 +42,9 @@ router.post('/', (req, res, next) => {
         }
 
         // We'll have 2 status: one we send on the request response and one in the webhook
-        const [initial_status, final_status] = calculateStatus(info);
+        const [initial_status, final_status, error_details] = calculateStatus(info);
 
+        // Create the transaction
         const id = createTransaction(
             info.operation,
             info.amount,
@@ -51,17 +53,21 @@ router.post('/', (req, res, next) => {
             info.callbackUrl,
             info.userProfile,
             initial_status,
+            error_details,
         );
 
+        // Response with success
         res.status(201);
         const payload = encodePayload(initial_status, id, info.orderIdentifier);
         res.send(payload);
 
+        // Send the webhook
         webhookHandler(
             info.callbackUrl,
             id,
             info.orderIdentifier,
             final_status,
+            error_details,  // we will only send the error details on the webhook and get status calls
         );
     } catch (e) {
         // Something bad happened :|
@@ -69,7 +75,7 @@ router.post('/', (req, res, next) => {
         res.send('💀');
 
         // Let's keep the log...
-        console.log(`${req.params.id}: ` + e);
+        console.error(e, e.stack)
     }
 });
 
