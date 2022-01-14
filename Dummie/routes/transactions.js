@@ -5,10 +5,9 @@ const XMLHttpRequest = require('xhr2');
 const { createTransaction, getTransaction, setStatus } = require('../db/db');
 const { encodeField, parse_payload } = require('../utils');
 
-/* GET users listing. */
+/* GET transactions details */
 router.get('/:id', (req, res, next) => {
     try {
-        // Get transaction details
         const info = getTransaction(req.params.id);
         if (info) {
             res.send({
