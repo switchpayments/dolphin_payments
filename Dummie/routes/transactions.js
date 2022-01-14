@@ -56,7 +56,7 @@ router.post('/', (req, res, next) => {
             error_details,
         );
 
-        // Response with success
+        // Respond with success
         res.status(201);
         const payload = encodePayload(initial_status, id, info.orderIdentifier);
         res.send(payload);
@@ -85,10 +85,10 @@ router.post('/', (req, res, next) => {
  * @param callbackUrl - URL we want to send the webhook
  * @param orderIdentifier - Order identifier
  */
-const webhookHandler = (callbackUrl, id, orderIdentifier, status) => {
+const webhookHandler = (callbackUrl, id, orderIdentifier, status, errorDetails) => {
     setTimeout(() => {
         setStatus(id, status);
-        const payload = encodePayload(status, id, orderIdentifier);
+        const payload = encodePayload(status, id, orderIdentifier, errorDetails);
 
         let xhr = new XMLHttpRequest();
         xhr.open('POST', callbackUrl, true);
