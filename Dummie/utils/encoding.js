@@ -12,7 +12,7 @@ const fields = {
 
 const required_fields = ['orderIdentifier', 'callbackUrl']
 
-const get_chars_occurences_at_start = (array, char) => {
+const getCharsOccurencesAtStart = (array, char) => {
     let i = 0;
 
     for(;array[i] === char && i < array.length; i++);
@@ -20,7 +20,7 @@ const get_chars_occurences_at_start = (array, char) => {
     return i;
 }
 
-const parse_fields = (message) => {
+const decodeFields = (message) => {
     const res = {};
     let i = 0;
 
@@ -40,21 +40,21 @@ const parse_fields = (message) => {
     return res;
 }
 
-const parse_payload = (message) => {
+const decodePayload = (message) => {
     if (!message) {
         throw '🤡';
     }
 
     message = Array.from(message);
 
-    let operation = message.splice(0, get_chars_occurences_at_start(message, '🐬')).length;
+    let operation = message.splice(0, getCharsOccurencesAtStart(message, '🐬')).length;
     if (!(operation in operations)) {
         throw '🤡';
     }
     operation = operations[operation];
 
-    const amount_major = message.splice(0, get_chars_occurences_at_start(message, '🍤')).length;
-    const amunt_minor = message.splice(0, get_chars_occurences_at_start(message, '🦐')).length;
+    const amount_major = message.splice(0, getCharsOccurencesAtStart(message, '🍤')).length;
+    const amunt_minor = message.splice(0, getCharsOccurencesAtStart(message, '🦐')).length;
     if(amount_major === 0 && amunt_minor === 0) {
         throw '🤡';
     }
@@ -63,7 +63,7 @@ const parse_payload = (message) => {
     let other_fields = {}
 
     try {
-        other_fields = parse_fields(message);
+        other_fields = decodeFields(message);
     } catch {
         throw '🤡';
     }
@@ -83,7 +83,16 @@ const parse_payload = (message) => {
 
 const encodeField = (fieldID, fieldValue) => `${fieldID}${fieldValue.length.toString().padStart(3, '0')}${fieldValue}`
 
+const encodePayload = (status, id, orderID) => {
+    const encodedID = encodeField('01', id.toString());
+    const encodedOrderID = encodeField('02', orderID.toString());
+
+    return {
+        'payload': `${status}${encodedID}${encodedOrderID}`,
+    }
+}
+
 module.exports = {
-    encodeField,
-    parse_payload,
+    decodePayload,
+    encodePayload,
 };
