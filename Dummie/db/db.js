@@ -1,7 +1,6 @@
-// Transactions DB
-const TRANSACTIONS = {}
-
 const fs = require('fs');
+
+const database_path = '../database.json'
 
 const logTransaction = (id, operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile) => {
     fs.appendFileSync('../transactions.txt', JSON.stringify({
@@ -15,6 +14,19 @@ const logTransaction = (id, operation, amount, buyersName, orderIdentifier, call
     }) + '\n')
 }
 
+const loadTransactions = () => {
+    try {
+        data = fs.readFileSync(database_path, 'utf-8');
+        return JSON.parse(data.toString());
+    } catch {
+        return {};
+    }
+}
+
+const storeTransactions = (transactions) => {
+    fs.writeFileSync(database_path, JSON.stringify(transactions));
+}
+
 const createTransaction = (operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile, status, errorDetails) => {
 
     // Create an unique ID for the transaction
@@ -23,28 +35,43 @@ const createTransaction = (operation, amount, buyersName, orderIdentifier, callb
     // Log the transaction to file (just an easy way to show the transactions being stored)
     logTransaction(id, operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile);
 
-    // Add the transaction to the DB
-    TRANSACTIONS[id] = {operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile, status, errorDetails};
+    // Get transactions from db
+    let transactions = loadTransactions();
+    transactions[id] = {operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile, status, errorDetails};
+
+    // Append the new transaction
+    transactions[id] = {operation, amount, buyersName, orderIdentifier, callbackUrl, userProfile, status, errorDetails};
+
+    // Store transactions to DB
+    storeTransactions(transactions);
 
     // Clean empty values
-    TRANSACTIONS[id] = Object.fromEntries(Object.entries(TRANSACTIONS[id]).filter(([_, v]) => v != null));
+    transactions[id] = Object.fromEntries(Object.entries(transactions[id]).filter(([_, v]) => v != null));
 
     // Return ID
     return id;
 }
 
 const getTransaction = id => {
+    // Load transactions from DB
+    let transactions = loadTransactions();
 
     // Get transaction
-    const transaction = TRANSACTIONS[id]
+    const transaction = transactions[id]
 
     // Return transaction details
     return transaction ? {id, ...transaction} : null;
 }
 
 const setStatus = (id, status) => {
+    // Load transactions from DB
+    let transactions = loadTransactions();
+
     // Update the status of the transaction
-    TRANSACTIONS[id].status = status;
+    transactions[id].status = status;
+
+    // Store the new transaction on DB
+    storeTransactions(transactions);
 }
 
 module.exports = {
